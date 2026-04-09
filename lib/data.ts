@@ -267,202 +267,149 @@ export const cpaNodes: CPANode[] = [
 export const cpaCriticalPath = "N1 → N2 → N3 → N4 → N5 → N6 → N7"
 export const cpaProjectDuration = "21 calendar days (20 Mar – 10 Apr 2026)"
 
-/** WBS — 4-level template: project → 4 activities → 3 tasks each → 5 / 4 / 3 work packages */
+/** WBS — root → 12 primary branches (1.1–1.12) → work packages (1.x.y) */
 export interface WBSWorkPackage {
   id: string
   title: string
 }
 
-export interface WBSTaskNode {
+export interface WBSSection {
   id: string
   title: string
   workPackages: WBSWorkPackage[]
 }
 
-export interface WBSActivityNode {
-  id: string
-  title: string
-  tasks: WBSTaskNode[]
-}
-
 export interface WBSStructure {
   projectTitle: string
-  activities: WBSActivityNode[]
+  sections: WBSSection[]
 }
 
-/** Smart Home (1.0) content mapped to template; task IDs follow activity (1.1–1.3, 2.1–2.3, …). */
+function section(id: string, title: string, items: string[]): WBSSection {
+  return {
+    id,
+    title,
+    workPackages: items.map((t, i) => ({ id: `${id}.${i + 1}`, title: t })),
+  }
+}
+
+/** Smart Home (1.0) — matches course WBS diagram (twelve level-1 nodes). */
 export const wbsStructured: WBSStructure = {
   projectTitle: "Smart Home Project (1.0)",
-  activities: [
-    {
-      id: "1",
-      title: "Initiate & govern",
-      tasks: [
-        {
-          id: "1.1",
-          title: "Planning & design",
-          workPackages: [
-            { id: "1.1.1", title: "Project Brief & PID" },
-            { id: "1.1.2", title: "WBS & Gantt" },
-            { id: "1.1.3", title: "Success criteria" },
-            { id: "1.1.4", title: "Scope & objectives" },
-            { id: "1.1.5", title: "Risks & mitigation" },
-          ],
-        },
-        {
-          id: "1.2",
-          title: "Stakeholders",
-          workPackages: [
-            { id: "1.2.1", title: "11 identified" },
-            { id: "1.2.2", title: "Manage closely" },
-            { id: "1.2.3", title: "Keep informed" },
-            { id: "1.2.4", title: "Comm. strategy" },
-          ],
-        },
-        {
-          id: "1.3",
-          title: "Planning & stakeholder wrap",
-          workPackages: [
-            { id: "1.3.1", title: "Constraints listed" },
-            { id: "1.3.2", title: "Power–interest grid" },
-            { id: "1.3.3", title: "Keep satisfied & monitor strategy" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "2",
-      title: "Research & physical design",
-      tasks: [
-        {
-          id: "2.1",
-          title: "Platform research",
-          workPackages: [
-            { id: "2.1.1", title: "LabVIEW selected" },
-            { id: "2.1.2", title: "Yale ecosystem" },
-            { id: "2.1.3", title: "Alternatives rejected" },
-            { id: "2.1.4", title: "Solar compatibility" },
-            { id: "2.1.5", title: "Amazon systems" },
-          ],
-        },
-        {
-          id: "2.2",
-          title: "Platform & dwelling layout",
-          workPackages: [
-            { id: "2.2.1", title: "Genius Hub" },
-            { id: "2.2.2", title: "Mind maps" },
-            { id: "2.2.3", title: "1-bed floor plan" },
-            { id: "2.2.4", title: "Studio floor plan" },
-          ],
-        },
-        {
-          id: "2.3",
-          title: "Home design",
-          workPackages: [
-            { id: "2.3.1", title: "Device legend" },
-            { id: "2.3.2", title: "Device rationale" },
-            { id: "2.3.3", title: "3-bed, per-room plans & colour-coded icons" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "3",
-      title: "Integration, costing & control",
-      tasks: [
-        {
-          id: "3.1",
-          title: "Integration & security",
-          workPackages: [
-            { id: "3.1.1", title: "Wi-Fi / Zigbee" },
-            { id: "3.1.2", title: "Z-Wave protocol" },
-            { id: "3.1.3", title: "UK GDPR compliance" },
-            { id: "3.1.4", title: "BS EN 50131" },
-            { id: "3.1.5", title: "Ecosystem integration" },
-          ],
-        },
-        {
-          id: "3.2",
-          title: "Evidence & unit costing",
-          workPackages: [
-            { id: "3.2.1", title: "Product table" },
-            { id: "3.2.2", title: "4-field maps" },
-            { id: "3.2.3", title: "3-bed: £1,500" },
-            { id: "3.2.4", title: "1-bed: £1,715" },
-          ],
-        },
-        {
-          id: "3.3",
-          title: "Costing wrap",
-          workPackages: [
-            { id: "3.3.1", title: "Studio: £20,208" },
-            { id: "3.3.2", title: "Costs total: £22,983" },
-            { id: "3.3.3", title: "Essentials / extras, benefits, ROI & payback" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "4",
-      title: "Systems, PM & close-out",
-      tasks: [
-        {
-          id: "4.1",
-          title: "Control systems",
-          workPackages: [
-            { id: "4.1.1", title: "LabVIEW overview" },
-            { id: "4.1.2", title: "Internal lighting" },
-            { id: "4.1.3", title: "Fire / CO alarm" },
-            { id: "4.1.4", title: "Temperature control" },
-            { id: "4.1.5", title: "Security logging" },
-          ],
-        },
-        {
-          id: "4.2",
-          title: "Control limits & PM tools",
-          workPackages: [
-            { id: "4.2.1", title: "PIR sensor spec" },
-            { id: "4.2.2", title: "Known limitations" },
-            { id: "4.2.3", title: "WBS description & Gantt chart" },
-            { id: "4.2.4", title: "Critical path & 4-field maps" },
-          ],
-        },
-        {
-          id: "4.3",
-          title: "Stakeholder PM, training, H&S & close-out",
-          workPackages: [
-            { id: "4.3.1", title: "Power–interest grid & PID analysis" },
-            {
-              id: "4.3.2",
-              title:
-                "Training: homeowner guides, sessions, elderly usability, warden onboarding",
-            },
-            {
-              id: "4.3.3",
-              title:
-                "H&S, review & appendices (plan, BS 5839-6, Part P, CQC, risk, Health & Social Act; report, refs, team & org; minutes, LabVIEW datasheet, pricing, peer assessment, datasheets)",
-            },
-          ],
-        },
-      ],
-    },
+  sections: [
+    section("1.1", "Planning & Design", [
+      "Project Brief & PID",
+      "WBS & Gantt",
+      "Success Criteria",
+      "Scope & Objectives",
+      "Risks & Mitigation",
+      "Constraints",
+    ]),
+    section("1.2", "Stakeholders", [
+      "11 Identified Stakeholders",
+      "Close Management Strategy",
+      "'Keep Informed' Strategy",
+      "Power-Interest Grid",
+      "'Keep Satisfied' Strategy",
+      "'Monitor' Strategy",
+    ]),
+    section("1.3", "Platform Research", [
+      "LABVIEW justification",
+      "YALE Ecosystem",
+      "Alternatives Researched and Rejected",
+      "Solar Power System Compatibility",
+      "Amazon System",
+      "Genius Hub",
+      "Mind Maps",
+    ]),
+    section("1.4", "Home Design", [
+      "4-Bed Floor Plan",
+      "Sheltered Accommodation Floor Plan",
+      "Device Legend",
+      "Device Rationale",
+      "2-Bed Floor Plan",
+      "Per-Room Floor Plan",
+      "Colour-Coded Icons",
+    ]),
+    section("1.5", "Integration & Security", [
+      "Protocol Research",
+      "UK GDPR Compliance",
+      "BS EN Compliance",
+      "Ecosystem Integration",
+      "Protocol Table",
+      "4-Field Map",
+    ]),
+    section("1.6", "Costing", [
+      "2-Bed: £1,805",
+      "4-Bed: £3,715",
+      "Sheltered Accommodation: £26,259",
+      "Development Total: £62,993",
+      "Essentials/Extras",
+      "Benefits & ROI",
+      "Payback Period",
+    ]),
+    section("1.7", "Control Systems", [
+      "LABVIEW Overview",
+      "Internal Lighting",
+      "Fire/CO Alarm",
+      "Temperature Control",
+      "Security Logging",
+      "PIR Sensor Spec",
+      "Known Limitations",
+    ]),
+    section("1.8", "PM Tools", [
+      "WBS Description",
+      "Gantt Chart",
+      "Critical Path",
+      "4-Field Maps",
+      "Power-Interest Grid",
+      "PID Analysis",
+    ]),
+    section("1.9", "Training", [
+      "Homeowner Guides",
+      "Training Sessions",
+      "Elderly Usability",
+      "Warden Onboarding",
+    ]),
+    section("1.10", "Health & Safety", [
+      "H&S Plan",
+      "BS EN Fire Regulation",
+      "Building Reg Part P",
+      "CQC Care Standards",
+      "Risk Assessment",
+      "Health & Social Act",
+    ]),
+    section("1.11", "Presentation & Report", [
+      "Introduction",
+      "Device Review",
+      "Conclusion",
+      "25+ References",
+      "Harvard Format",
+      "Team Performance",
+      "Org Structure",
+    ]),
+    section("1.12", "Appendices", [
+      "Meeting Minutes",
+      "LABVIEW Datasheet",
+      "Pricing tables",
+      "Genius Hub",
+      "Peer Assessment",
+      "Additional Datasheets",
+    ]),
   ],
 }
 
-/** Flat list for exports / search (optional) */
+/** Flat list for exports / search */
 export interface WBSNode {
   id: string
   title: string
   children: string[]
 }
 
-export const wbsTree: WBSNode[] = wbsStructured.activities.flatMap((a) =>
-  a.tasks.map((t) => ({
-    id: t.id,
-    title: t.title,
-    children: t.workPackages.map((w) => w.title),
-  })),
-)
+export const wbsTree: WBSNode[] = wbsStructured.sections.map((s) => ({
+  id: s.id,
+  title: s.title,
+  children: s.workPackages.map((w) => w.title),
+}))
 
 /** Four Fields Map — per phase */
 export type FourFieldsLane = { name: string; tasks: { text: string; detail?: string }[] }

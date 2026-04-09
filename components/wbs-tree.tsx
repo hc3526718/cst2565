@@ -67,37 +67,30 @@ export function WBSTree() {
           {wbsStructured.projectTitle}
         </div>
         <div className="h-3 w-px bg-slate-800" aria-hidden />
-        <div className="h-px w-[min(100%,72rem)] bg-slate-800" aria-hidden />
+        <div className="h-px w-full max-w-[100rem] bg-slate-800" aria-hidden />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-4">
-        {wbsStructured.activities.map((activity) => (
-          <div key={activity.id} className="flex min-w-0 flex-col items-center gap-2">
-            <div className="h-3 w-px shrink-0 bg-slate-800" aria-hidden />
-            <div className="w-full rounded-lg border-2 border-slate-900 bg-slate-900 px-2 py-2.5 text-center text-xs font-semibold text-white">
-              <span className="font-mono text-sky-200">{activity.id}</span> {activity.title}
-            </div>
-            <div className="h-2 w-px bg-slate-800" aria-hidden />
-            <div className="grid w-full min-w-0 gap-2 sm:grid-cols-3">
-              {activity.tasks.map((task) => (
-                <div key={task.id} className="flex min-w-0 flex-col items-center gap-1.5">
-                  <div className="h-2 w-px bg-slate-800" aria-hidden />
-                  <div className="w-full rounded-md border border-blue-900 bg-blue-700 px-1.5 py-2 text-center text-[11px] font-medium leading-tight text-white">
-                    <span className="font-mono text-blue-100">{task.id}</span>
-                    <br />
-                    {task.title}
-                  </div>
-                  <div className="h-1.5 w-px grow bg-slate-800" aria-hidden />
-                  <div className="flex w-full min-w-0 flex-col gap-1.5">
-                    {task.workPackages.map((wp) => (
-                      <WpButton key={wp.id} id={wp.id} title={wp.title} onHover={showTip} />
-                    ))}
-                  </div>
+      <div className="overflow-x-auto pb-2">
+        <div className="mx-auto flex min-w-[min(100%,72rem)] w-max max-w-none justify-center gap-2 xl:min-w-0 xl:w-full xl:max-w-[100rem]">
+          <div className="grid w-max min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 xl:w-full">
+            {wbsStructured.sections.map((section) => (
+              <div key={section.id} className="flex min-w-[8.5rem] max-w-[14rem] flex-col items-center gap-1.5 xl:min-w-0 xl:max-w-none">
+                <div className="h-2 w-px shrink-0 bg-slate-800" aria-hidden />
+                <div className="w-full rounded-lg border-2 border-slate-900 bg-slate-900 px-1.5 py-2 text-center text-[10px] font-semibold leading-tight text-white sm:text-[11px]">
+                  <span className="font-mono text-sky-200">{section.id}</span>
+                  <br />
+                  {section.title}
                 </div>
-              ))}
-            </div>
+                <div className="h-1.5 w-px grow bg-slate-800" aria-hidden />
+                <div className="flex w-full flex-col gap-1.5">
+                  {section.workPackages.map((wp) => (
+                    <WpButton key={wp.id} id={wp.id} title={wp.title} onHover={showTip} />
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </div>
   )
