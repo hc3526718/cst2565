@@ -8,19 +8,27 @@ import {
 } from "@heroui/react"
 import {
   CalendarClockIcon,
+  FlagIcon,
+  FolderTreeIcon,
   GanttChartIcon,
   HomeIcon,
   LayoutDashboardIcon,
+  LayoutGridIcon,
   PanelLeftIcon,
   PoundSterlingIcon,
+  RouteIcon,
+  TablePropertiesIcon,
   UsersIcon,
-  FlagIcon,
 } from "lucide-react"
 import { SidebarNav, type NavItem } from "@/components/sidebar-nav"
 
 const navItems: NavItem[] = [
   { title: "Overview", href: "/", icon: LayoutDashboardIcon },
   { title: "Gantt Chart", href: "/gantt", icon: GanttChartIcon },
+  { title: "Activity list", href: "/activity-list", icon: TablePropertiesIcon },
+  { title: "CPA", href: "/cpa", icon: RouteIcon },
+  { title: "WBS", href: "/wbs", icon: FolderTreeIcon },
+  { title: "Four Fields Map", href: "/four-fields", icon: LayoutGridIcon },
   { title: "Costs", href: "/costs", icon: PoundSterlingIcon },
   { title: "Team", href: "/team", icon: UsersIcon },
   { title: "Milestones", href: "/milestones", icon: FlagIcon },
@@ -34,7 +42,7 @@ function SidebarBrand() {
       </div>
       <div className="flex flex-col">
         <span className="text-sm font-semibold leading-tight">CST2565</span>
-        <span className="text-[11px] text-muted-foreground leading-tight">Smart Home Dashboard</span>
+        <span className="text-[11px] text-muted-foreground leading-tight">Assignment 2 · Smart Home</span>
       </div>
     </div>
   )
@@ -44,7 +52,7 @@ function SidebarFooter() {
   return (
     <div className="text-muted-foreground flex items-center gap-2 text-xs">
       <CalendarClockIcon className="size-3.5 shrink-0" aria-hidden />
-      <span>Due 24 Apr 2026 · PRINCE2</span>
+      <span>Due 10 Apr 2026 · Presentation &amp; submission</span>
     </div>
   )
 }
@@ -54,7 +62,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Desktop sidebar */}
       <aside className="bg-sidebar text-sidebar-foreground border-sidebar-border hidden w-64 shrink-0 flex-col border-r md:flex">
         <div className="flex flex-1 flex-col gap-2 p-4">
           <SidebarBrand />
@@ -94,9 +101,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
           <Separator orientation="vertical" className="bg-border hidden !h-4 md:block" />
 
-          <span className="text-sm font-medium">Smart Home Consulting</span>
+          <span className="text-sm font-medium">Smart Home — Group project</span>
           <span className="text-muted-foreground ml-auto hidden text-xs tabular-nums sm:block">
-            CST2565 · Weeks 8–12
+            CST2565 · Mar–Apr 2026
           </span>
         </header>
 

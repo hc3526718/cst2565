@@ -7,10 +7,10 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { costData } from "@/lib/data"
+import { costData, chartColorForHousing } from "@/lib/data"
 
 const chartData = costData.map((c) => ({
-  name: c.type.replace("4-Bed ", "").replace("2-Bed ", ""),
+  name: c.type.replace("2-Bed ", "").replace("4-Bed ", "").replace("Sheltered ", "Sheltered "),
   total: c.total,
   perUnit: c.perUnit,
 }))
@@ -18,11 +18,11 @@ const chartData = costData.map((c) => ({
 const chartConfig = {
   total: {
     label: "Total (£)",
-    color: "oklch(0.55 0.2 250)",
+    color: chartColorForHousing("2-Bed Starter Home"),
   },
   perUnit: {
-    label: "Per Unit (£)",
-    color: "oklch(0.62 0.18 55)",
+    label: "Per unit (£)",
+    color: chartColorForHousing("4-Bed Family Home"),
   },
 } satisfies ChartConfig
 

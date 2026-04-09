@@ -7,25 +7,25 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { ganttTasks, teamMembers } from "@/lib/data"
+import { ganttTasks, teamMembers, ownerColor } from "@/lib/data"
 
-const MEMBER_COLORS: Record<string, string> = {
-  Afsah: "oklch(0.55 0.2 250)",
-  Jake: "oklch(0.6 0.18 165)",
-  Eeshitha: "oklch(0.55 0.2 300)",
-  Syed: "oklch(0.62 0.18 55)",
-}
-
-const data = teamMembers.map((m) => ({
-  name: m.name,
-  tasks: ganttTasks.filter((t) => t.owner === m.name && !t.isMilestone).length,
-  fill: MEMBER_COLORS[m.name] ?? "oklch(0.58 0.16 15)",
-}))
+const data = [
+  ...teamMembers.map((m) => ({
+    name: m.name,
+    tasks: ganttTasks.filter((t) => t.owner === m.name && !t.isMilestone).length,
+    fill: ownerColor(m.name),
+  })),
+  {
+    name: "All (group)",
+    tasks: ganttTasks.filter((t) => t.owner === "All" && !t.isMilestone).length,
+    fill: ownerColor("All"),
+  },
+]
 
 const chartConfig = {
   tasks: {
     label: "Tasks",
-    color: "oklch(0.55 0.2 250)",
+    color: ownerColor("Haydn"),
   },
 } satisfies ChartConfig
 

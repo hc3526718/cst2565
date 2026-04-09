@@ -1,3 +1,43 @@
+/** CST2565 Assignment 2 — Smart Home project (Mar–Apr 2026) */
+
+const MS_PER_DAY = 86400000
+
+/** Timeline anchor: 20 Mar 2026 (UTC date math, no DST issues) */
+export const PROJECT_START_ISO = "2026-03-20"
+export const PROJECT_END_ISO = "2026-04-10"
+
+export function dayIndexFromIso(iso: string): number {
+  const [y, m, d] = iso.split("-").map(Number)
+  const t = Date.UTC(y, m - 1, d)
+  const a0 = Date.UTC(2026, 2, 20)
+  return Math.round((t - a0) / MS_PER_DAY)
+}
+
+export function formatShortDate(iso: string): string {
+  const [y, mo, d] = iso.split("-").map(Number)
+  return new Date(Date.UTC(y, mo - 1, d)).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  })
+}
+
+export const TIMELINE_DAYS: string[] = (() => {
+  const out: string[] = []
+  const start = Date.UTC(2026, 2, 20)
+  for (let i = 0; i <= 21; i++) {
+    const t = new Date(start + i * MS_PER_DAY)
+    const y = t.getUTCFullYear()
+    const m = String(t.getUTCMonth() + 1).padStart(2, "0")
+    const d = String(t.getUTCDate()).padStart(2, "0")
+    out.push(`${y}-${m}-${d}`)
+  }
+  return out
+})()
+
+export const TOTAL_TIMELINE_DAYS = TIMELINE_DAYS.length
+
 export interface TeamMember {
   name: string
   handle: string
@@ -6,17 +46,148 @@ export interface TeamMember {
   color: string
 }
 
+export const teamMembers: TeamMember[] = [
+  {
+    name: "Mahari",
+    handle: "@mahari",
+    role: "PID, stakeholders, WBS, PM tools, benefits/costs, Appendix C",
+    files: ["PID & scope", "WBS (draw.io)", "Stakeholder grid", "Section 17", "Appendix C"],
+    color: "oklch(0.42 0.09 55)",
+  },
+  {
+    name: "Mohammed",
+    handle: "@mohammed",
+    role: "Gantt & CPA, review & conclusion, device validation",
+    files: ["Activity list & Gantt", "CPA diagram", "Review / Conclusion"],
+    color: "oklch(0.42 0.08 165)",
+  },
+  {
+    name: "Nisar",
+    handle: "@nisar",
+    role: "Introduction, 4-field maps, integration & cyber, final sign-off",
+    files: ["Intro & brief", "4-Field Maps", "Integration section", "Final upload"],
+    color: "oklch(0.45 0.15 290)",
+  },
+  {
+    name: "Haydn",
+    handle: "@haydn",
+    role: "Systems research, floor plans, costing, appendices, LabVIEW datasheet",
+    files: ["Devices & protocols", "Floor plans", "Costing tables", "Appendices A/B"],
+    color: "oklch(0.48 0.16 250)",
+  },
+]
+
+export const OWNER_COLORS: Record<string, string> = {
+  Mahari: "oklch(0.42 0.09 55)",
+  Mohammed: "oklch(0.42 0.08 165)",
+  Nisar: "oklch(0.45 0.15 290)",
+  Haydn: "oklch(0.48 0.16 250)",
+  All: "oklch(0.38 0.02 0)",
+}
+
+export function ownerColor(owner: string): string {
+  return OWNER_COLORS[owner] ?? "oklch(0.45 0.02 0)"
+}
+
 export interface GanttTask {
   id: string
+  numericId?: number
   name: string
   owner: string
-  startWeek: number
-  startDay: number
-  endWeek: number
-  endDay: number
+  startIso: string
+  endIso: string
   category: string
+  duration: string
+  predecessors: string
   isMilestone?: boolean
+  isMeetingMarker?: boolean
 }
+
+export const fridayMeetingDayIndices = [0, 7, 14, 21] // Mar 20, 27; Apr 3, 10
+
+export const ganttTasks: GanttTask[] = [
+  {
+    id: "M1",
+    name: "Milestone M1 — Phase 1 complete",
+    owner: "All",
+    startIso: "2026-03-21",
+    endIso: "2026-03-21",
+    category: "Phase 1 — Project kick-off & planning",
+    duration: "—",
+    predecessors: "—",
+    isMilestone: true,
+  },
+  { id: "1", numericId: 1, name: "Project kick-off meeting & task allocation", owner: "All", startIso: "2026-03-20", endIso: "2026-03-20", category: "Phase 1 — Project kick-off & planning", duration: "1 day", predecessors: "—" },
+  { id: "2", numericId: 2, name: "Shared document setup, file naming & section headings", owner: "All", startIso: "2026-03-20", endIso: "2026-03-21", category: "Phase 1 — Project kick-off & planning", duration: "2 days", predecessors: "1" },
+
+  { id: "M2", name: "Milestone M2 — Phase 2 complete", owner: "All", startIso: "2026-03-27", endIso: "2026-03-27", category: "Phase 2 — Research & early drafts", duration: "—", predecessors: "—", isMilestone: true },
+  { id: "3", numericId: 3, name: "PID — executive summary, scope, objectives, risks & success criteria", owner: "Mahari", startIso: "2026-03-21", endIso: "2026-03-27", category: "Phase 2 — Research & early drafts", duration: "1 week", predecessors: "1, 2" },
+  { id: "4", numericId: 4, name: "Stakeholder identification & power-interest grid (11 stakeholders)", owner: "Mahari", startIso: "2026-03-21", endIso: "2026-03-27", category: "Phase 2 — Research & early drafts", duration: "1 week", predecessors: "1, 2" },
+  { id: "5", numericId: 5, name: "Project organisational structure diagram (draw.io)", owner: "Mahari", startIso: "2026-03-21", endIso: "2026-03-24", category: "Phase 2 — Research & early drafts", duration: "4 days", predecessors: "1, 2" },
+  { id: "6", numericId: 6, name: "Introduction & project brief draft (three property types)", owner: "Nisar", startIso: "2026-03-21", endIso: "2026-03-27", category: "Phase 2 — Research & early drafts", duration: "1 week", predecessors: "1, 2" },
+  { id: "7", numericId: 7, name: "Gantt chart activity list, dates & bar diagram (Excel)", owner: "Mohammed", startIso: "2026-03-22", endIso: "2026-03-27", category: "Phase 2 — Research & early drafts", duration: "1 week", predecessors: "1, 2" },
+  { id: "8", numericId: 8, name: "Systems, devices & communication protocols research (Wi-Fi, Zigbee, Z-Wave, LabVIEW, Yale, Genius Hub, Alexa)", owner: "Haydn", startIso: "2026-03-21", endIso: "2026-03-27", category: "Phase 2 — Research & early drafts", duration: "1 week", predecessors: "1, 2" },
+
+  { id: "M3", name: "Milestone M3 — Phases 3 & 4 gates", owner: "All", startIso: "2026-04-03", endIso: "2026-04-03", category: "Phase 3 — WBS, CPA, device selection & floor plans", duration: "—", predecessors: "—", isMilestone: true },
+  { id: "9", numericId: 9, name: "Work Breakdown Structure — all 12 branches (draw.io)", owner: "Mahari", startIso: "2026-03-27", endIso: "2026-04-03", category: "Phase 3 — WBS, CPA, device selection & floor plans", duration: "1 week", predecessors: "3, 4, 5" },
+  { id: "10", numericId: 10, name: "Critical Path Analysis — node diagram with ES, LS, EF, LF & float", owner: "Mohammed", startIso: "2026-03-27", endIso: "2026-04-03", category: "Phase 3 — WBS, CPA, device selection & floor plans", duration: "1 week", predecessors: "7" },
+  { id: "11", numericId: 11, name: "4-Field Maps — all four project phases (draw.io)", owner: "Nisar", startIso: "2026-03-27", endIso: "2026-04-03", category: "Phase 3 — WBS, CPA, device selection & floor plans", duration: "1 week", predecessors: "6, 7" },
+  { id: "12", numericId: 12, name: "2-bedroom starter home — device selection & colour-coded floor plan", owner: "Haydn", startIso: "2026-03-27", endIso: "2026-04-03", category: "Phase 3 — WBS, CPA, device selection & floor plans", duration: "1 week", predecessors: "8" },
+  { id: "13", numericId: 13, name: "4-bedroom family home — device selection & colour-coded floor plan", owner: "Haydn", startIso: "2026-03-27", endIso: "2026-04-03", category: "Phase 3 — WBS, CPA, device selection & floor plans", duration: "1 week", predecessors: "8" },
+  { id: "14", numericId: 14, name: "Sheltered accommodation — device selection, per-room & building plan", owner: "Haydn", startIso: "2026-03-27", endIso: "2026-04-03", category: "Phase 3 — WBS, CPA, device selection & floor plans", duration: "1 week", predecessors: "8" },
+
+  { id: "15", numericId: 15, name: "Costing tables — all three property types (Excel, parts only in GBP)", owner: "Haydn", startIso: "2026-03-27", endIso: "2026-04-03", category: "Phase 4 — Costing, recommendations & drafting", duration: "1 week", predecessors: "12, 13, 14" },
+  { id: "16", numericId: 16, name: "Overall recommendation, rationale sections & solar panel analysis", owner: "Haydn", startIso: "2026-03-27", endIso: "2026-04-03", category: "Phase 4 — Costing, recommendations & drafting", duration: "1 week", predecessors: "12, 13, 14, 15" },
+  { id: "17", numericId: 17, name: "PM tools used section & benefits/costs with payback calculations", owner: "Mahari", startIso: "2026-03-27", endIso: "2026-04-03", category: "Phase 4 — Costing, recommendations & drafting", duration: "1 week", predecessors: "9" },
+  { id: "18", numericId: 18, name: "Integration plan, implementation section & cyber incident response", owner: "Nisar", startIso: "2026-03-27", endIso: "2026-04-03", category: "Phase 4 — Costing, recommendations & drafting", duration: "1 week", predecessors: "11" },
+
+  { id: "19", numericId: 19, name: "Review section — device validation against three PID requirements", owner: "Mohammed", startIso: "2026-04-03", endIso: "2026-04-06", category: "Phase 5 — Review, conclusion & appendices", duration: "3 days", predecessors: "10, 15, 16" },
+  { id: "20", numericId: 20, name: "Conclusion — PM frameworks summary & improvement pathway", owner: "Mohammed", startIso: "2026-04-03", endIso: "2026-04-06", category: "Phase 5 — Review, conclusion & appendices", duration: "3 days", predecessors: "19" },
+  { id: "21", numericId: 21, name: "Appendix B — LabVIEW technical datasheet (5 control areas, protocols)", owner: "Haydn", startIso: "2026-04-03", endIso: "2026-04-06", category: "Phase 5 — Review, conclusion & appendices", duration: "3 days", predecessors: "8, 16" },
+  { id: "22", numericId: 22, name: "Appendix A — meeting minutes log (Meetings 1–7)", owner: "Haydn", startIso: "2026-04-03", endIso: "2026-04-06", category: "Phase 5 — Review, conclusion & appendices", duration: "3 days", predecessors: "19" },
+  { id: "23", numericId: 23, name: "Appendix C — PM tools evidence & screenshots", owner: "Mahari", startIso: "2026-04-03", endIso: "2026-04-06", category: "Phase 5 — Review, conclusion & appendices", duration: "3 days", predecessors: "17" },
+
+  { id: "M4", name: "Milestone M4 — Presentation rehearsal", owner: "All", startIso: "2026-04-09", endIso: "2026-04-09", category: "Phase 6 — References, proof-reading & sign-off", duration: "—", predecessors: "—", isMilestone: true },
+  { id: "24", numericId: 24, name: "Full references list — 25+ Harvard sources cross-checked", owner: "All", startIso: "2026-04-05", endIso: "2026-04-09", category: "Phase 6 — References, proof-reading & sign-off", duration: "4 days", predecessors: "19, 20, 21" },
+  { id: "25", numericId: 25, name: "Final proof-read, corrections & formatting check (all sections)", owner: "All", startIso: "2026-04-05", endIso: "2026-04-09", category: "Phase 6 — References, proof-reading & sign-off", duration: "4 days", predecessors: "20, 22, 23, 24" },
+  { id: "26", numericId: 26, name: "Presentation slides preparation & full group rehearsal (9 Apr)", owner: "All", startIso: "2026-04-07", endIso: "2026-04-09", category: "Phase 6 — References, proof-reading & sign-off", duration: "3 days", predecessors: "25" },
+
+  { id: "M5", name: "Milestone M5 — Submission & presentation", owner: "All", startIso: "2026-04-10", endIso: "2026-04-10", category: "Phase 6 — References, proof-reading & sign-off", duration: "—", predecessors: "—", isMilestone: true },
+  { id: "27", numericId: 27, name: "Final sign-off & report submission upload", owner: "Nisar", startIso: "2026-04-09", endIso: "2026-04-09", category: "Phase 6 — References, proof-reading & sign-off", duration: "1 day", predecessors: "25, 26" },
+  { id: "28", numericId: 28, name: "Group presentation & assessment", owner: "All", startIso: "2026-04-10", endIso: "2026-04-10", category: "Phase 6 — References, proof-reading & sign-off", duration: "1 day", predecessors: "27" },
+]
+
+export function taskBarSpan(task: GanttTask): { left: number; width: number } {
+  const s = dayIndexFromIso(task.startIso)
+  const e = dayIndexFromIso(task.endIso)
+  const width = e - s + 1
+  return { left: s, width: Math.max(width, task.isMilestone ? 0.15 : 0.5) }
+}
+
+/** Activity list rows (same data as Gantt, tabular export) */
+export type ActivityRow = {
+  id: string
+  activity: string
+  owner: string
+  start: string
+  finish: string
+  duration: string
+  predecessors: string
+  phase: string
+}
+
+export const activityRows: ActivityRow[] = ganttTasks
+  .filter((t) => !t.isMilestone)
+  .map((t) => ({
+    id: String(t.numericId ?? t.id),
+    activity: t.name,
+    owner: t.owner,
+    start: formatShortDate(t.startIso),
+    finish: formatShortDate(t.endIso),
+    duration: t.duration,
+    predecessors: t.predecessors,
+    phase: t.category,
+  }))
 
 export interface CostEntry {
   type: string
@@ -25,6 +196,14 @@ export interface CostEntry {
   total: number
 }
 
+export const costData: CostEntry[] = [
+  { type: "2-Bed Starter Home", perUnit: 1805.03, units: 1, total: 1805.03 },
+  { type: "4-Bed Family Home", perUnit: 3715.63, units: 1, total: 3715.63 },
+  { type: "Sheltered Accommodation", perUnit: 26259.93, units: 1, total: 26259.93 },
+]
+
+export const TOTAL_ESTATE_COST = 62993.95
+
 export interface Milestone {
   name: string
   week: number
@@ -32,136 +211,266 @@ export interface Milestone {
   status: "pending" | "in-progress" | "complete"
 }
 
-export const teamMembers: TeamMember[] = [
-  {
-    name: "Afsah",
-    handle: "@NAME0x0",
-    role: "Project Manager / Report Editor",
-    files: ["01-project-management/", "05-minutes/", "Intro", "Conclusion"],
-    color: "oklch(0.55 0.2 250)",
-  },
-  {
-    name: "Jake",
-    handle: "@JakeSajith",
-    role: "Technical Lead — Family Homes",
-    files: ["03-designs/family-home.md", "Protocol research", "Diagrams"],
-    color: "oklch(0.6 0.18 165)",
-  },
-  {
-    name: "Eeshitha",
-    handle: "@Eeshitha-afk",
-    role: "Technical Lead — Sheltered Accommodation",
-    files: ["03-designs/sheltered-accommodation.md", "Security research"],
-    color: "oklch(0.55 0.2 300)",
-  },
-  {
-    name: "Syed",
-    handle: "@Syed-Nihaal",
-    role: "Technical Lead — Starter Homes & Costing",
-    files: ["03-designs/starter-home.md", "Cost summary", "Appendices"],
-    color: "oklch(0.62 0.18 55)",
-  },
-]
-
-export const ganttTasks: GanttTask[] = [
-  { id: "1.1.1", name: "Draft PID", owner: "Afsah", startWeek: 8, startDay: 1, endWeek: 8, endDay: 3, category: "Initiation" },
-  { id: "1.1.2", name: "Create WBS", owner: "Jake", startWeek: 8, startDay: 2, endWeek: 8, endDay: 3, category: "Initiation" },
-  { id: "1.1.3", name: "Create Gantt Chart", owner: "Afsah", startWeek: 8, startDay: 3, endWeek: 8, endDay: 4, category: "Initiation" },
-  { id: "1.1.4", name: "Create 4-Fields Map", owner: "Afsah", startWeek: 8, startDay: 3, endWeek: 8, endDay: 5, category: "Initiation" },
-  { id: "1.1.5", name: "Brainstorming Session", owner: "All", startWeek: 8, startDay: 1, endWeek: 8, endDay: 2, category: "Initiation" },
-  { id: "M1", name: "Tutor Sign-Off", owner: "All", startWeek: 8, startDay: 5, endWeek: 8, endDay: 5, category: "Initiation", isMilestone: true },
-
-  { id: "1.2.1", name: "Platform Comparison", owner: "Jake", startWeek: 9, startDay: 1, endWeek: 9, endDay: 3, category: "Research" },
-  { id: "1.2.3", name: "Protocols Research", owner: "Jake", startWeek: 9, startDay: 1, endWeek: 9, endDay: 3, category: "Research" },
-  { id: "1.2.2a", name: "Devices: Heating & HVAC", owner: "Syed", startWeek: 9, startDay: 1, endWeek: 9, endDay: 3, category: "Research" },
-  { id: "1.2.2b", name: "Devices: Security & Access", owner: "Eeshitha", startWeek: 9, startDay: 1, endWeek: 9, endDay: 3, category: "Research" },
-  { id: "1.2.2c", name: "Devices: Lighting", owner: "Syed", startWeek: 9, startDay: 2, endWeek: 9, endDay: 3, category: "Research" },
-  { id: "1.2.2d", name: "Devices: Sensors", owner: "Jake", startWeek: 9, startDay: 2, endWeek: 9, endDay: 4, category: "Research" },
-  { id: "1.2.2e", name: "Assistive Tech Survey", owner: "Eeshitha", startWeek: 9, startDay: 2, endWeek: 9, endDay: 5, category: "Research" },
-  { id: "1.2.2f", name: "Energy & Solar Survey", owner: "Syed", startWeek: 9, startDay: 2, endWeek: 9, endDay: 4, category: "Research" },
-  { id: "1.2.4", name: "Security & Privacy", owner: "Eeshitha", startWeek: 9, startDay: 3, endWeek: 9, endDay: 5, category: "Research" },
-  { id: "1.2.5", name: "UK Regulatory Research", owner: "Afsah", startWeek: 9, startDay: 3, endWeek: 9, endDay: 5, category: "Research" },
-  { id: "M2", name: "Research Complete", owner: "All", startWeek: 9, startDay: 5, endWeek: 9, endDay: 5, category: "Research", isMilestone: true },
-
-  { id: "1.3.1", name: "Family Home Persona", owner: "Jake", startWeek: 10, startDay: 1, endWeek: 10, endDay: 1, category: "Design: Family" },
-  { id: "1.3.2", name: "Platform Selection", owner: "Jake", startWeek: 10, startDay: 1, endWeek: 10, endDay: 2, category: "Design: Family" },
-  { id: "1.3.3", name: "Device Selection + Prices", owner: "Jake", startWeek: 10, startDay: 2, endWeek: 10, endDay: 4, category: "Design: Family" },
-  { id: "1.3.4", name: "Solar Integration", owner: "Jake", startWeek: 10, startDay: 3, endWeek: 10, endDay: 4, category: "Design: Family" },
-  { id: "1.3.5", name: "Network Diagram", owner: "Jake", startWeek: 10, startDay: 4, endWeek: 10, endDay: 5, category: "Design: Family" },
-  { id: "1.3.6", name: "Cost Table (Family)", owner: "Jake", startWeek: 10, startDay: 4, endWeek: 10, endDay: 5, category: "Design: Family" },
-
-  { id: "1.4.1a", name: "Elderly Resident Persona", owner: "Eeshitha", startWeek: 10, startDay: 1, endWeek: 10, endDay: 1, category: "Design: Sheltered" },
-  { id: "1.4.1b", name: "Warden Persona", owner: "Eeshitha", startWeek: 10, startDay: 1, endWeek: 10, endDay: 2, category: "Design: Sheltered" },
-  { id: "1.4.2", name: "Assistive Tech Selection", owner: "Eeshitha", startWeek: 10, startDay: 2, endWeek: 11, endDay: 2, category: "Design: Sheltered" },
-  { id: "1.4.3", name: "Platform (Accessibility)", owner: "Eeshitha", startWeek: 10, startDay: 3, endWeek: 11, endDay: 2, category: "Design: Sheltered" },
-  { id: "1.4.4", name: "Warden Dashboard", owner: "Eeshitha", startWeek: 11, startDay: 1, endWeek: 11, endDay: 3, category: "Design: Sheltered" },
-  { id: "1.4.5", name: "Device Selection (Rooms)", owner: "Eeshitha", startWeek: 11, startDay: 2, endWeek: 11, endDay: 4, category: "Design: Sheltered" },
-  { id: "1.4.7", name: "Network Diagram", owner: "Eeshitha", startWeek: 11, startDay: 3, endWeek: 11, endDay: 5, category: "Design: Sheltered" },
-  { id: "1.4.8", name: "Cost Table (Sheltered)", owner: "Eeshitha", startWeek: 11, startDay: 4, endWeek: 11, endDay: 5, category: "Design: Sheltered" },
-
-  { id: "1.5.1", name: "First-Time Buyer Persona", owner: "Syed", startWeek: 10, startDay: 1, endWeek: 10, endDay: 1, category: "Design: Starter" },
-  { id: "1.5.2", name: "Platform (Cost-Optimised)", owner: "Syed", startWeek: 10, startDay: 1, endWeek: 10, endDay: 2, category: "Design: Starter" },
-  { id: "1.5.3", name: "Essential vs Optional Tiers", owner: "Syed", startWeek: 10, startDay: 2, endWeek: 10, endDay: 5, category: "Design: Starter" },
-  { id: "1.5.5", name: "Network Diagram", owner: "Syed", startWeek: 11, startDay: 1, endWeek: 11, endDay: 2, category: "Design: Starter" },
-  { id: "1.5.6", name: "Cost Table (Starter)", owner: "Syed", startWeek: 11, startDay: 2, endWeek: 11, endDay: 4, category: "Design: Starter" },
-
-  { id: "1.6.1", name: "Estate-Wide Cost Summary", owner: "Syed", startWeek: 11, startDay: 3, endWeek: 11, endDay: 4, category: "Cost-Benefit" },
-  { id: "1.6.2", name: "Tangible Benefits", owner: "Syed", startWeek: 11, startDay: 4, endWeek: 11, endDay: 5, category: "Cost-Benefit" },
-  { id: "1.6.3", name: "Intangible Benefits", owner: "Afsah", startWeek: 11, startDay: 4, endWeek: 11, endDay: 5, category: "Cost-Benefit" },
-  { id: "1.6.4", name: "ROI / Payback Period", owner: "Syed", startWeek: 11, startDay: 5, endWeek: 11, endDay: 5, category: "Cost-Benefit" },
-  { id: "1.6.5", name: "Additional Features", owner: "Syed", startWeek: 11, startDay: 3, endWeek: 11, endDay: 5, category: "Cost-Benefit" },
-  { id: "M3", name: "All Designs Complete", owner: "All", startWeek: 11, startDay: 5, endWeek: 11, endDay: 5, category: "Cost-Benefit", isMilestone: true },
-
-  { id: "1.7.1", name: "Write: Intro & Stakeholders", owner: "Afsah", startWeek: 12, startDay: 1, endWeek: 12, endDay: 1, category: "Report" },
-  { id: "1.7.2", name: "Write: Brainstorming", owner: "Afsah", startWeek: 12, startDay: 1, endWeek: 12, endDay: 1, category: "Report" },
-  { id: "1.7.3", name: "Write: PM Artefacts", owner: "Afsah", startWeek: 12, startDay: 1, endWeek: 12, endDay: 2, category: "Report" },
-  { id: "1.7.4", name: "Write: Design Sections", owner: "All", startWeek: 12, startDay: 1, endWeek: 12, endDay: 2, category: "Report" },
-  { id: "1.7.5", name: "Write: Costing", owner: "Syed", startWeek: 12, startDay: 2, endWeek: 12, endDay: 2, category: "Report" },
-  { id: "1.7.6", name: "Write: Additional Features", owner: "Syed", startWeek: 12, startDay: 2, endWeek: 12, endDay: 3, category: "Report" },
-  { id: "1.7.7", name: "Write: Conclusion", owner: "Afsah", startWeek: 12, startDay: 3, endWeek: 12, endDay: 3, category: "Report" },
-  { id: "1.7.8", name: "Compile Appendix", owner: "Syed", startWeek: 12, startDay: 2, endWeek: 12, endDay: 3, category: "Report" },
-  { id: "1.7.9", name: "Peer Review", owner: "All", startWeek: 12, startDay: 3, endWeek: 12, endDay: 3, category: "Report" },
-  { id: "1.7.10", name: "Formatting & Proofreading", owner: "Afsah", startWeek: 12, startDay: 3, endWeek: 12, endDay: 4, category: "Report" },
-  { id: "M4", name: "Report Draft Complete", owner: "All", startWeek: 12, startDay: 4, endWeek: 12, endDay: 4, category: "Report", isMilestone: true },
-
-  { id: "1.8.1", name: "Design Slides", owner: "All", startWeek: 12, startDay: 3, endWeek: 12, endDay: 3, category: "Presentation" },
-  { id: "1.8.2", name: "Prepare Visual Aids", owner: "All", startWeek: 12, startDay: 3, endWeek: 12, endDay: 4, category: "Presentation" },
-  { id: "1.8.3", name: "Rehearsal (Timed)", owner: "All", startWeek: 12, startDay: 5, endWeek: 12, endDay: 5, category: "Presentation" },
-  { id: "M5", name: "Final Submission", owner: "All", startWeek: 12, startDay: 5, endWeek: 12, endDay: 5, category: "Presentation", isMilestone: true },
-]
-
-export const costData: CostEntry[] = [
-  { type: "4-Bed Family Home", perUnit: 4814, units: 6, total: 28884 },
-  { type: "Sheltered Accommodation", perUnit: 26037, units: 1, total: 26037 },
-  { type: "2-Bed Starter Home", perUnit: 961, units: 8, total: 7688 },
-]
-
 export const milestones: Milestone[] = [
-  { name: "Tutor Sign-Off on PID & Plan", week: 8, day: 5, status: "pending" },
-  { name: "Research Phase Complete", week: 9, day: 5, status: "pending" },
-  { name: "All Designs Complete", week: 11, day: 5, status: "pending" },
-  { name: "Report Draft Complete", week: 12, day: 4, status: "pending" },
-  { name: "Final Report Submitted", week: 12, day: 5, status: "pending" },
-  { name: "Presentation Delivered", week: 12, day: 5, status: "pending" },
+  { name: "M1 — Phase 1 complete (kick-off & planning)", week: 1, day: 2, status: "pending" },
+  { name: "M2 — Phase 2 complete (research & drafts)", week: 2, day: 8, status: "pending" },
+  { name: "M3 — WBS / CPA / costing / drafting gates", week: 3, day: 15, status: "pending" },
+  { name: "M4 — Rehearsal (9 Apr)", week: 4, day: 21, status: "pending" },
+  { name: "M5 — Submission & presentation (10 Apr)", week: 4, day: 22, status: "pending" },
 ]
 
-export const TOTAL_ESTATE_COST = 62609
-export const WEEKS = [8, 9, 10, 11, 12] as const
-export const DAYS_PER_WEEK = 5
-export const TOTAL_DAYS = WEEKS.length * DAYS_PER_WEEK
-
-export function getOwnerColor(owner: string): string {
-  const member = teamMembers.find((m) => m.name === owner)
-  if (member) return member.color
-  return "oklch(0.58 0.16 15)"
+/** CPA diagram nodes */
+export interface CPANode {
+  id: string
+  title: string
+  duration: string
+  es: string
+  ef: string
+  ls: string
+  lf: string
+  float: string
+  detail?: string
 }
 
-export function getDayOffset(week: number, day: number): number {
-  return (week - 8) * DAYS_PER_WEEK + (day - 1)
+export const cpaNodes: CPANode[] = [
+  { id: "N1", title: "Kick-off & planning", duration: "2d", es: "20 Mar", ef: "21 Mar", ls: "20 Mar", lf: "21 Mar", float: "0", detail: "Project initiation, roles, and shared documentation." },
+  { id: "N2", title: "Research & early drafts", duration: "7d", es: "21 Mar", ef: "27 Mar", ls: "21 Mar", lf: "27 Mar", float: "0" },
+  { id: "N3", title: "WBS, CPA & device selection", duration: "7d", es: "27 Mar", ef: "3 Apr", ls: "27 Mar", lf: "3 Apr", float: "0", detail: "Runs in parallel with N4 (costing & recommendations)." },
+  { id: "N4", title: "Costing & recommendations", duration: "7d", es: "27 Mar", ef: "3 Apr", ls: "27 Mar", lf: "3 Apr", float: "0", detail: "Parallel path with N3." },
+  { id: "N5", title: "Review & appendices", duration: "3d", es: "3 Apr", ef: "6 Apr", ls: "3 Apr", lf: "6 Apr", float: "0" },
+  { id: "N6", title: "References & proof-reading", duration: "4d", es: "5 Apr", ef: "9 Apr", ls: "5 Apr", lf: "9 Apr", float: "0" },
+  { id: "N7", title: "Sign-off & presentation", duration: "1d", es: "10 Apr", ef: "10 Apr", ls: "10 Apr", lf: "10 Apr", float: "0" },
+]
+
+export const cpaCriticalPath = "N1 → N2 → N3 → N4 → N5 → N6 → N7"
+export const cpaProjectDuration = "21 calendar days (20 Mar – 10 Apr 2026)"
+
+/** WBS tree */
+export interface WBSNode {
+  id: string
+  title: string
+  children: string[]
 }
 
-export function getTaskWidth(task: GanttTask): number {
-  const start = getDayOffset(task.startWeek, task.startDay)
-  const end = getDayOffset(task.endWeek, task.endDay)
-  return end - start + 1
+export const wbsTree: WBSNode[] = [
+  { id: "1.1", title: "Planning & Design", children: ["Project Brief & PID", "WBS & Gantt", "Success Criteria", "Scope & Objectives", "Risks & Mitigation", "Constraints Listed"] },
+  { id: "1.2", title: "Stakeholders", children: ["11 Identified", "Manage Closely", "Keep Informed", "Comm. Strategy", "Power-Interest Grid", "Keep Satisfied", "Monitor Strategy"] },
+  { id: "1.3", title: "Platform Research", children: ["LabVIEW Selected", "Yale Ecosystem", "Alternatives Rejected", "Solar Compatibility", "Amazon Systems", "Genius Hub", "Mind Maps"] },
+  { id: "1.4", title: "Home Design", children: ["1-Bed Floor Plan", "Shelter Floor Plan", "Device Legend", "Device Rationale", "2-Bed Floor Plan", "Per-Room Plan", "Colour-Coded Icons"] },
+  { id: "1.5", title: "Integration & Security", children: ["Wi-Fi / Zigbee", "Z-Wave Protocol", "UK GDPR Compliance", "BS EN 50131", "Ecosystem Integration", "Protocol Table", "4-Field Maps"] },
+  { id: "1.6", title: "Costing", children: ["2-Bed: £1,500", "1-Bed: £1,715", "Shelter: £20,209", "Entire Total: £22,963", "Essentials / Extras", "Benefits & ROI", "Payback Period"] },
+  { id: "1.7", title: "Control Systems", children: ["LabVIEW Overview", "Internal Lighting", "Fire / CO Alarm", "Temperature Control", "Security Logging", "PIR Sensor Spec", "Known Limitations"] },
+  { id: "1.8", title: "PM Tools", children: ["WBS Description", "Gantt Chart", "Critical Path", "4-Field Maps", "Power-Interest Grid", "PIG Analysis"] },
+  { id: "1.9", title: "Training", children: ["Homeowner Guides", "Training Sessions", "Elderly Usability", "Warden Onboarding"] },
+  { id: "1.10", title: "Health & Safety", children: ["H&S Plan", "BS 5839-6 Fire", "Building Reg Part P", "CQC Care Standards", "Risk Assessment", "Health & Social Act"] },
+  { id: "1.11", title: "Review & Report", children: ["Introduction", "Device Review", "Conclusion", "25+ References", "Harvard Format", "Team Performance", "Org Structure"] },
+  { id: "1.12", title: "Appendices", children: ["7 Meeting Minutes", "LabVIEW Datasheet", "Pricing Tables", "Peer Assessment", "Additional Datasheets"] },
+]
+
+/** Four Fields Map — per phase */
+export type FourFieldsLane = { name: string; tasks: { text: string; detail?: string }[] }
+
+export interface FourFieldsPhase {
+  key: string
+  label: string
+  leftLabel: string
+  rightLabel: string
+  headers: string[]
+  milestones: { text: string; detail?: string }[]
+  lanes: FourFieldsLane[]
+  gate?: { name: string; detail?: string }
+  gateCriteria?: string[]
+  standards?: string[]
+  wideBox?: { text: string; detail?: string }
+}
+
+export const fourFieldsPhases: FourFieldsPhase[] = [
+  {
+    key: "early",
+    label: "Early phase",
+    leftLabel: "EARLY PHASE",
+    rightLabel: "Standards — See research standards & ensure smart devices meet health & safety regs",
+    headers: ["Haydn", "Mohammed", "Mahari", "Nisar"],
+    milestones: [
+      { text: "Initial Meetings — Kick-off & Assign Sections (20 March 2026)", detail: "Allocate sections and agree file structure." },
+      { text: "Review Meeting (Friday 27 March 2026)", detail: "Weekly review of research progress." },
+    ],
+    lanes: [
+      { name: "Haydn", tasks: [
+        { text: "Research smart systems & protocols", detail: "Wi-Fi, Zigbee, Z-Wave, LabVIEW, Yale." },
+        { text: "Look for smart devices for all homes" },
+        { text: "Retrieve device pricing & references" },
+        { text: "Review platform docs (LabVIEW, Yale)" },
+      ]},
+      { name: "Mohammed", tasks: [
+        { text: "Draft activity list dates & durations" },
+        { text: "Research UK H&S regulations & standards" },
+        { text: "Check compliance BS 5839-6, BS EN 50131" },
+        { text: "Confirm data protection compliance" },
+      ]},
+      { name: "Mahari", tasks: [
+        { text: "Research project scope & PID criteria" },
+        { text: "Identify stakeholders power-interest mapping" },
+        { text: "Estimate budget per property type" },
+        { text: "Review PM frameworks & WBS refs" },
+      ]},
+      { name: "Nisar", tasks: [
+        { text: "Research project brief & client needs" },
+        { text: "Find running costs of all smart devices" },
+        { text: "Research building regs & solar standards" },
+        { text: "Source references Harvard & PM texts" },
+      ]},
+    ],
+    gate: { name: "Gate 1", detail: "Quality gate before detailed design." },
+    gateCriteria: [
+      "Do all smart devices meet health & safety requirements (BS 5839-6, BS EN 50131, Building Regs Part P)?",
+      "Do the smart devices fit within the budget for each property type?",
+      "Can cheaper compliant alternatives be identified before selection is finalised?",
+    ],
+    standards: [
+      "Affordable devices found for each property type — 2-bed £1,805 / 4-bed £3,715 / sheltered £26,259",
+      "Running & fixed costs verified — solar compatibility confirmed (MCS / IEC 61215 / G99 DNO)",
+      "All research gathered: device references, regulations, Harvard sources & pricing before gate review",
+      "Data Protection Act 2018 / UK GDPR / ISO 27001 & CQC care standards confirmed applicable",
+    ],
+  },
+  {
+    key: "discussion",
+    label: "Discussion stage",
+    leftLabel: "DISCUSSION STAGE",
+    rightLabel: "Standards — See research standards & ensure smart devices meet H&S regulation & remain within budget",
+    headers: ["Haydn", "Mohammed", "Mahari", "Nisar"],
+    milestones: [
+      { text: "Weekly Meeting — Fri 27 March 2026" },
+      { text: "Weekly Meeting — Fri 3 April 2026" },
+    ],
+    lanes: [
+      { name: "Haydn", tasks: [
+        { text: "Consider solar panel integration — MCS, IEC 61215 & G99 DNO" },
+        { text: "Evaluate sensors & protocols per home Wi-Fi, Zigbee, Z-Wave" },
+        { text: "Choose best devices for 2-bed, 4-bed & sheltered housing" },
+      ]},
+      { name: "Mohammed", tasks: [
+        { text: "Review Gantt & CPA confirm task sequence & no critical delays" },
+        { text: "Draw risk assessment tech obsolescence, budget & cyber risks" },
+        { text: "Begin review section & conclusion draft aligned to PID criteria" },
+      ]},
+      { name: "Mahari", tasks: [
+        { text: "Check devices fit estimated budget per property type" },
+        { text: "Apply stakeholder power-interest grid & PID scope review" },
+        { text: "Finalise WBS branches & benefits / costs payback calculations" },
+      ]},
+      { name: "Nisar", tasks: [
+        { text: "Identify integration issues — Alexa, Yale & Genius Hub" },
+        { text: "Draw risk assessment usability & elderly resident safety risks" },
+        { text: "Finalise introduction & 4-field map drafts for group sign-off" },
+      ]},
+    ],
+    wideBox: {
+      text: "Write report & prepare presentation slides — ALL members. Sign off assigned sections — peer review — confirm 25+ Harvard references. Slide content, timings & Q&A practice ahead of 10 April assessment.",
+      detail: "Collaborative drafting and peer review before checking stage.",
+    },
+    gate: { name: "Gate 2" },
+    gateCriteria: [
+      "Do all Gate 1 criteria still hold? BS 5839-6:2019, BS EN 50131, Building Regs Part P & DPA 2018 all confirmed met",
+      "Has device selection been reviewed and agreed at the Friday weekly meeting with tutor Rand Raheem?",
+      "Are all three costing tables within budget? 2-bed £1,805.03 / 4-bed £3,715.63 / sheltered £26,259.93",
+      "Is there sufficient research & rationale across all three property types for report drafting to proceed to the next phase?",
+    ],
+    standards: [
+      "Smart devices must help reduce carbon footprint — solar panels compliant with MCS & IEC 61215 recommended across all property types",
+      "Smart devices must facilitate residents’ lives — Alexa Drop In for sheltered, Genius Hub per-room heating meeting CQC 18°C minimum",
+      "Smart devices must be user-friendly — Yale panic button (one press, no Wi-Fi), Echo Dot voice control deployed across all three property types",
+      "Smart devices must be easy to implement — LabVIEW local server (no cloud), Yale Sync Hub single-supplier ecosystem simplifying compliance",
+    ],
+  },
+  {
+    key: "checking",
+    label: "Checking stage",
+    leftLabel: "CHECKING STAGE",
+    rightLabel: "Standards: See research standards & ensure security systems in all houses & remain within budget",
+    headers: ["Haydn", "Mohammed", "Mahari", "Nisar"],
+    milestones: [
+      { text: "Weekly Meeting — Fri 3 April 2026" },
+      { text: "Weekly Meeting — Fri 7 April 2026" },
+    ],
+    lanes: [
+      { name: "Haydn", tasks: [
+        { text: "Discuss advantages of selected smart devices per property" },
+        { text: "Research & verify advantages for 4-bed & 2-bed — energy, security & convenience" },
+        { text: "Check smart meter & Yale Smart Water Sensor integration" },
+        { text: "Check floor plan device placements & solar compatibility" },
+      ]},
+      { name: "Mohammed", tasks: [
+        { text: "Present device costs & confirm protocols Wi-Fi, Zigbee, Z-Wave" },
+        { text: "Check LabVIEW supports independent living automation" },
+        { text: "Check smart heating Hive thermostat & Genius Hub setup" },
+      ]},
+      { name: "Mahari", tasks: [
+        { text: "Check final costs fit estimated budget across all 3 types" },
+        { text: "Confirm selections: 2-bed £1,805.03 / 4-bed £3,715.63 / sheltered £26,259.93 — estate £62,993.95" },
+        { text: "Check Yale security BS EN 50131 Grade 2 compliance" },
+        { text: "Proofread report appendices, references & final corrections" },
+      ]},
+      { name: "Nisar", tasks: [
+        { text: "Verify user-friendliness of devices for elderly residents" },
+        { text: "Check security systems across all three property types" },
+        { text: "Final sign-off & submission prep 9 April 2026" },
+      ]},
+    ],
+    gate: { name: "Gate 3" },
+    gateCriteria: [
+      "Do all Gate 2 criteria still hold? Costing tables, device selection and UK regulatory compliance all confirmed.",
+      "Has the full report been approved at the Friday weekly meeting and signed off by all four group members?",
+      "Have the security systems (Yale Sync Hub, TAPO cameras, BS EN 50131) been verified across all three property types?",
+      "Have costs and protocols (Wi-Fi, Zigbee, Z-Wave, RS-232) been fully documented in Appendix B?",
+      "Have the advantages of smart devices across all three household types been clearly evidenced in the rationale sections?",
+    ],
+    standards: [
+      "Smart devices must fit all house types — 2-bed, 4-bed and sheltered with tailored specifications.",
+      "Smart devices must be affordable — estate total £62,993.95 parts only per client brief.",
+      "Smart devices must be user-friendly — Yale panic button, Echo Dot, Fire HD 10 tablets verified.",
+      "Smart devices must be easy to implement — LabVIEW local server, Yale ecosystem, G99 DNO solar compliance.",
+    ],
+  },
+  {
+    key: "completion",
+    label: "Completion phase",
+    leftLabel: "COMPLETION PHASE",
+    rightLabel: "See Standards",
+    headers: ["Haydn", "Mohammed", "Mahari", "Nisar"],
+    milestones: [
+      { text: "Weekly Meeting — Fri 7 April 2026" },
+      { text: "Weekly Meeting — Fri 7 April 2026 (sign-off)" },
+      { text: "Documentation of project management process — Final report uploaded (Appendix A + B — Haydn submits)", detail: "Formal close-out of PM artefacts." },
+    ],
+    lanes: [
+      { name: "Haydn", tasks: [{ text: "Review team planning & execution — systems, devices & rationale sections" }] },
+      { name: "Mohammed", tasks: [{ text: "Review Gantt, CPA & conclusion — all activities on schedule" }] },
+      { name: "Mahari", tasks: [{ text: "Review member final work — PID, WBS, benefits & Appendix C" }] },
+      { name: "Nisar", tasks: [{ text: "Review intro, integration & 4-field maps — phases documented" }] },
+    ],
+    wideBox: {
+      text: "Review collaboration & meetings (100% attendance, 7 meetings). Peer review all sections — slides, timings, Q&A. 25+ Harvard references confirmed.",
+    },
+    gate: { name: "Gate 4" },
+    standards: [
+      "Execution: All three property types addressed with costings & training.",
+      "Teamwork: Equal contribution & attendance across 7 sessions.",
+      "Client brief: Floor plans, costing tables, LabVIEW doc & solar analysis included.",
+      "Presentation: Ready for 10 Apr — rehearsal 9 Apr.",
+      "Regulatory: DPA 2018, BS 5839-6:2019, BS EN 50131 Grade 2, Part P, CQC evidenced.",
+    ],
+  },
+]
+
+/** Legacy exports for chart components (use housing type labels) */
+const CHART_COLORS: Record<string, string> = {
+  "2-Bed Starter Home": "oklch(0.48 0.16 250)",
+  "4-Bed Family Home": "oklch(0.42 0.09 55)",
+  "Sheltered Accommodation": "oklch(0.45 0.15 290)",
+}
+
+export function chartColorForHousing(type: string): string {
+  return CHART_COLORS[type] ?? "oklch(0.45 0.02 0)"
 }

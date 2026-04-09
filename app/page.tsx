@@ -11,70 +11,75 @@ import {
   costData,
   milestones,
   TOTAL_ESTATE_COST,
+  chartColorForHousing,
+  formatShortDate,
+  PROJECT_START_ISO,
+  PROJECT_END_ISO,
 } from "@/lib/data"
 import { OverviewCharts } from "@/components/overview-charts"
-
-const HOUSING_COLORS: Record<string, string> = {
-  "4-Bed Family Home": "oklch(0.55 0.2 250)",
-  "Sheltered Accommodation": "oklch(0.6 0.18 165)",
-  "2-Bed Starter Home": "oklch(0.62 0.18 55)",
-}
 
 export default function Page() {
   const totalTasks = ganttTasks.filter((t) => !t.isMilestone).length
   const memberCount = teamMembers.length
+  const phaseCount = 6
+  const milestoneCount = ganttTasks.filter((t) => t.isMilestone).length
 
   return (
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Project Overview</h1>
         <p className="text-muted-foreground">
-          CST2565 — Smart Home Consulting | Weeks 8–12 | Due 24 April 2026
+          CST2565 — Smart Home group report (Assignment 2) · {formatShortDate(PROJECT_START_ISO)} →{" "}
+          {formatShortDate(PROJECT_END_ISO)} · Mahari, Mohammed, Nisar & Haydn
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="border-border shadow-sm">
           <Card.Header className="flex flex-row items-center justify-between pb-2">
-            <Card.Description>Estate Total Cost</Card.Description>
+            <Card.Description>Estate total (parts only)</Card.Description>
             <PoundSterlingIcon className="text-muted-foreground size-4" />
           </Card.Header>
           <Card.Content>
-            <div className="text-2xl font-bold tabular-nums">£{TOTAL_ESTATE_COST.toLocaleString()}</div>
-            <p className="text-muted-foreground mt-1 text-xs">15 units · parts only</p>
+            <div className="text-2xl font-bold tabular-nums">
+              £{TOTAL_ESTATE_COST.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </div>
+            <p className="text-muted-foreground mt-1 text-xs">Three property types · GBP · Excel model</p>
           </Card.Content>
         </Card>
 
         <Card className="border-border shadow-sm">
           <Card.Header className="flex flex-row items-center justify-between pb-2">
-            <Card.Description>Total Tasks</Card.Description>
+            <Card.Description>Scheduled activities</Card.Description>
             <ListChecksIcon className="text-muted-foreground size-4" />
           </Card.Header>
           <Card.Content>
             <div className="text-2xl font-bold tabular-nums">{totalTasks}</div>
-            <p className="text-muted-foreground mt-1 text-xs">{milestones.length} milestones</p>
+            <p className="text-muted-foreground mt-1 text-xs">
+              {milestoneCount} milestones (M1–M5) on Gantt
+            </p>
           </Card.Content>
         </Card>
 
         <Card className="border-border shadow-sm">
           <Card.Header className="flex flex-row items-center justify-between pb-2">
-            <Card.Description>Team Members</Card.Description>
+            <Card.Description>Team members</Card.Description>
             <UsersIcon className="text-muted-foreground size-4" />
           </Card.Header>
           <Card.Content>
             <div className="text-2xl font-bold tabular-nums">{memberCount}</div>
-            <p className="text-muted-foreground mt-1 text-xs">PRINCE2 Waterfall</p>
+            <p className="text-muted-foreground mt-1 text-xs">Plus shared “All” tasks on the plan</p>
           </Card.Content>
         </Card>
 
         <Card className="border-border shadow-sm">
           <Card.Header className="flex flex-row items-center justify-between pb-2">
-            <Card.Description>Project Duration</Card.Description>
+            <Card.Description>Plan window</Card.Description>
             <CalendarDaysIcon className="text-muted-foreground size-4" />
           </Card.Header>
           <Card.Content>
-            <div className="text-2xl font-bold tabular-nums">5 Weeks</div>
-            <p className="text-muted-foreground mt-1 text-xs">Week 8 → Week 12</p>
+            <div className="text-2xl font-bold tabular-nums">{phaseCount} phases</div>
+            <p className="text-muted-foreground mt-1 text-xs">CPA critical path 21 days (calendar)</p>
           </Card.Content>
         </Card>
       </div>
@@ -82,8 +87,8 @@ export default function Page() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="border-border shadow-sm">
           <Card.Header>
-            <Card.Title>Cost Breakdown</Card.Title>
-            <Card.Description>Per housing type (parts only, GBP)</Card.Description>
+            <Card.Title>Cost breakdown</Card.Title>
+            <Card.Description>Per property type (parts only, Assignment 2 figures)</Card.Description>
           </Card.Header>
           <Card.Content>
             <OverviewCharts />
@@ -93,7 +98,7 @@ export default function Page() {
         <Card className="border-border shadow-sm">
           <Card.Header>
             <Card.Title>Milestones</Card.Title>
-            <Card.Description>Key project gates</Card.Description>
+            <Card.Description>Key gates on the Gantt</Card.Description>
           </Card.Header>
           <Card.Content>
             <div className="flex flex-col gap-3">
@@ -107,7 +112,7 @@ export default function Page() {
                       <span className="text-sm">{m.name}</span>
                     </div>
                     <Badge variant="soft" color="default" size="sm" className="ml-2 shrink-0 text-xs tabular-nums">
-                      W{m.week} D{m.day}
+                      Day {m.day}
                     </Badge>
                   </div>
                   {i < milestones.length - 1 && (
@@ -122,8 +127,8 @@ export default function Page() {
 
       <Card className="border-border shadow-sm">
         <Card.Header>
-          <Card.Title>Housing Types</Card.Title>
-          <Card.Description>Estate specification summary</Card.Description>
+          <Card.Title>Property types</Card.Title>
+          <Card.Description>Costing summary (same basis as Gate 2 / checking stage)</Card.Description>
         </Card.Header>
         <Card.Content>
           <div className="grid gap-4 sm:grid-cols-3">
@@ -131,17 +136,20 @@ export default function Page() {
               <div
                 key={c.type}
                 className="rounded-lg border border-l-4 p-4 transition-shadow hover:shadow-sm"
-                style={{ borderLeftColor: HOUSING_COLORS[c.type] }}
+                style={{ borderLeftColor: chartColorForHousing(c.type) }}
               >
                 <div className="flex items-center gap-2">
-                  <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: HOUSING_COLORS[c.type] }} />
+                  <span
+                    className="size-2.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: chartColorForHousing(c.type) }}
+                  />
                   <p className="text-sm font-medium">{c.type}</p>
                 </div>
                 <Separator className="my-2" />
                 <div className="flex flex-col gap-1 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Per unit</span>
-                    <span className="tabular-nums">£{c.perUnit.toLocaleString()}</span>
+                    <span className="tabular-nums">£{c.perUnit.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Units</span>
@@ -150,7 +158,7 @@ export default function Page() {
                   <Separator className="my-1" />
                   <div className="flex justify-between font-semibold">
                     <span>Total</span>
-                    <span className="tabular-nums">£{c.total.toLocaleString()}</span>
+                    <span className="tabular-nums">£{c.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                   </div>
                 </div>
               </div>

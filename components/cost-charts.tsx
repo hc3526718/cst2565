@@ -9,32 +9,26 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart"
-import { costData } from "@/lib/data"
-
-const HOUSING_COLORS: Record<string, string> = {
-  "4-Bed Family Home": "oklch(0.55 0.2 250)",
-  "Sheltered Accommodation": "oklch(0.6 0.18 165)",
-  "2-Bed Starter Home": "oklch(0.62 0.18 55)",
-}
+import { costData, chartColorForHousing } from "@/lib/data"
 
 const pieData = costData.map((c) => ({
   name: c.type,
   value: c.total,
-  fill: HOUSING_COLORS[c.type] ?? "oklch(0.58 0.16 15)",
+  fill: chartColorForHousing(c.type),
 }))
 
 const chartConfig = {
+  "2-Bed Starter Home": {
+    label: "2-bed starter",
+    color: chartColorForHousing("2-Bed Starter Home"),
+  },
   "4-Bed Family Home": {
-    label: "Family Homes (×6)",
-    color: "oklch(0.55 0.2 250)",
+    label: "4-bed family",
+    color: chartColorForHousing("4-Bed Family Home"),
   },
   "Sheltered Accommodation": {
-    label: "Sheltered (×1)",
-    color: "oklch(0.6 0.18 165)",
-  },
-  "2-Bed Starter Home": {
-    label: "Starter Homes (×8)",
-    color: "oklch(0.62 0.18 55)",
+    label: "Sheltered",
+    color: chartColorForHousing("Sheltered Accommodation"),
   },
 } satisfies ChartConfig
 
@@ -43,7 +37,7 @@ export function CostCharts() {
     <ChartContainer config={chartConfig} className="mx-auto h-[300px] w-full">
       <PieChart accessibilityLayer>
         <ChartTooltip
-          content={<ChartTooltipContent formatter={(value) => `£${Number(value).toLocaleString()}`} />}
+          content={<ChartTooltipContent formatter={(value) => `£${Number(value).toLocaleString(undefined, { minimumFractionDigits: 2 })}`} />}
         />
         <Pie
           data={pieData}

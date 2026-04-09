@@ -5,17 +5,20 @@ export default function GanttPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Gantt Chart</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Gantt chart</h1>
         <p className="text-muted-foreground">
-          Project timeline — Weeks 8 to 12 | Click a member to filter
+          Assignment 2 schedule — 28 tasks across six phases (20 Mar – 10 Apr 2026). Filter by owner; ♦ marks
+          Friday meetings. Hover any bar — the info panel is anchored to that bar (fixed to viewport from its
+          screen position).
         </p>
       </div>
 
       <Card className="border-border shadow-sm">
         <Card.Header>
-          <Card.Title>Project Schedule</Card.Title>
+          <Card.Title>Project schedule</Card.Title>
           <Card.Description>
-            Tasks from the WBS mapped across 5 weeks (25 working days). Hover over any bar for details.
+            Milestones M1–M5, assignee colour coding (Mahari · Mohammed · Nisar · Haydn · All), and predecessor
+            logic as in the activity list.
           </Card.Description>
         </Card.Header>
         <Card.Content>
