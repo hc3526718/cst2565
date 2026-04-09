@@ -196,13 +196,35 @@ export interface CostEntry {
   total: number
 }
 
+const STARTER_PER_UNIT = 1805.03
+const FAMILY_PER_UNIT = 3715.63
+const SHARED_PER_UNIT = 26259.93
+const STARTER_UNITS = 8
+const FAMILY_UNITS = 6
+const SHARED_UNITS = 1
+
 export const costData: CostEntry[] = [
-  { type: "2-Bed Starter Home", perUnit: 1805.03, units: 1, total: 1805.03 },
-  { type: "4-Bed Family Home", perUnit: 3715.63, units: 1, total: 3715.63 },
-  { type: "Sheltered Accommodation", perUnit: 26259.93, units: 1, total: 26259.93 },
+  {
+    type: "Starter home",
+    perUnit: STARTER_PER_UNIT,
+    units: STARTER_UNITS,
+    total: Math.round(STARTER_PER_UNIT * STARTER_UNITS * 100) / 100,
+  },
+  {
+    type: "Family home",
+    perUnit: FAMILY_PER_UNIT,
+    units: FAMILY_UNITS,
+    total: Math.round(FAMILY_PER_UNIT * FAMILY_UNITS * 100) / 100,
+  },
+  {
+    type: "Shared / sheltered accommodation",
+    perUnit: SHARED_PER_UNIT,
+    units: SHARED_UNITS,
+    total: Math.round(SHARED_PER_UNIT * SHARED_UNITS * 100) / 100,
+  },
 ]
 
-export const TOTAL_ESTATE_COST = 62993.95
+export const TOTAL_ESTATE_COST = costData.reduce((sum, c) => sum + c.total, 0)
 
 export interface Milestone {
   name: string
@@ -245,27 +267,202 @@ export const cpaNodes: CPANode[] = [
 export const cpaCriticalPath = "N1 → N2 → N3 → N4 → N5 → N6 → N7"
 export const cpaProjectDuration = "21 calendar days (20 Mar – 10 Apr 2026)"
 
-/** WBS tree */
+/** WBS — 4-level template: project → 4 activities → 3 tasks each → 5 / 4 / 3 work packages */
+export interface WBSWorkPackage {
+  id: string
+  title: string
+}
+
+export interface WBSTaskNode {
+  id: string
+  title: string
+  workPackages: WBSWorkPackage[]
+}
+
+export interface WBSActivityNode {
+  id: string
+  title: string
+  tasks: WBSTaskNode[]
+}
+
+export interface WBSStructure {
+  projectTitle: string
+  activities: WBSActivityNode[]
+}
+
+/** Smart Home (1.0) content mapped to template; task IDs follow activity (1.1–1.3, 2.1–2.3, …). */
+export const wbsStructured: WBSStructure = {
+  projectTitle: "Smart Home Project (1.0)",
+  activities: [
+    {
+      id: "1",
+      title: "Initiate & govern",
+      tasks: [
+        {
+          id: "1.1",
+          title: "Planning & design",
+          workPackages: [
+            { id: "1.1.1", title: "Project Brief & PID" },
+            { id: "1.1.2", title: "WBS & Gantt" },
+            { id: "1.1.3", title: "Success criteria" },
+            { id: "1.1.4", title: "Scope & objectives" },
+            { id: "1.1.5", title: "Risks & mitigation" },
+          ],
+        },
+        {
+          id: "1.2",
+          title: "Stakeholders",
+          workPackages: [
+            { id: "1.2.1", title: "11 identified" },
+            { id: "1.2.2", title: "Manage closely" },
+            { id: "1.2.3", title: "Keep informed" },
+            { id: "1.2.4", title: "Comm. strategy" },
+          ],
+        },
+        {
+          id: "1.3",
+          title: "Planning & stakeholder wrap",
+          workPackages: [
+            { id: "1.3.1", title: "Constraints listed" },
+            { id: "1.3.2", title: "Power–interest grid" },
+            { id: "1.3.3", title: "Keep satisfied & monitor strategy" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "2",
+      title: "Research & physical design",
+      tasks: [
+        {
+          id: "2.1",
+          title: "Platform research",
+          workPackages: [
+            { id: "2.1.1", title: "LabVIEW selected" },
+            { id: "2.1.2", title: "Yale ecosystem" },
+            { id: "2.1.3", title: "Alternatives rejected" },
+            { id: "2.1.4", title: "Solar compatibility" },
+            { id: "2.1.5", title: "Amazon systems" },
+          ],
+        },
+        {
+          id: "2.2",
+          title: "Platform & dwelling layout",
+          workPackages: [
+            { id: "2.2.1", title: "Genius Hub" },
+            { id: "2.2.2", title: "Mind maps" },
+            { id: "2.2.3", title: "1-bed floor plan" },
+            { id: "2.2.4", title: "Studio floor plan" },
+          ],
+        },
+        {
+          id: "2.3",
+          title: "Home design",
+          workPackages: [
+            { id: "2.3.1", title: "Device legend" },
+            { id: "2.3.2", title: "Device rationale" },
+            { id: "2.3.3", title: "3-bed, per-room plans & colour-coded icons" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "3",
+      title: "Integration, costing & control",
+      tasks: [
+        {
+          id: "3.1",
+          title: "Integration & security",
+          workPackages: [
+            { id: "3.1.1", title: "Wi-Fi / Zigbee" },
+            { id: "3.1.2", title: "Z-Wave protocol" },
+            { id: "3.1.3", title: "UK GDPR compliance" },
+            { id: "3.1.4", title: "BS EN 50131" },
+            { id: "3.1.5", title: "Ecosystem integration" },
+          ],
+        },
+        {
+          id: "3.2",
+          title: "Evidence & unit costing",
+          workPackages: [
+            { id: "3.2.1", title: "Product table" },
+            { id: "3.2.2", title: "4-field maps" },
+            { id: "3.2.3", title: "3-bed: £1,500" },
+            { id: "3.2.4", title: "1-bed: £1,715" },
+          ],
+        },
+        {
+          id: "3.3",
+          title: "Costing wrap",
+          workPackages: [
+            { id: "3.3.1", title: "Studio: £20,208" },
+            { id: "3.3.2", title: "Costs total: £22,983" },
+            { id: "3.3.3", title: "Essentials / extras, benefits, ROI & payback" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "4",
+      title: "Systems, PM & close-out",
+      tasks: [
+        {
+          id: "4.1",
+          title: "Control systems",
+          workPackages: [
+            { id: "4.1.1", title: "LabVIEW overview" },
+            { id: "4.1.2", title: "Internal lighting" },
+            { id: "4.1.3", title: "Fire / CO alarm" },
+            { id: "4.1.4", title: "Temperature control" },
+            { id: "4.1.5", title: "Security logging" },
+          ],
+        },
+        {
+          id: "4.2",
+          title: "Control limits & PM tools",
+          workPackages: [
+            { id: "4.2.1", title: "PIR sensor spec" },
+            { id: "4.2.2", title: "Known limitations" },
+            { id: "4.2.3", title: "WBS description & Gantt chart" },
+            { id: "4.2.4", title: "Critical path & 4-field maps" },
+          ],
+        },
+        {
+          id: "4.3",
+          title: "Stakeholder PM, training, H&S & close-out",
+          workPackages: [
+            { id: "4.3.1", title: "Power–interest grid & PID analysis" },
+            {
+              id: "4.3.2",
+              title:
+                "Training: homeowner guides, sessions, elderly usability, warden onboarding",
+            },
+            {
+              id: "4.3.3",
+              title:
+                "H&S, review & appendices (plan, BS 5839-6, Part P, CQC, risk, Health & Social Act; report, refs, team & org; minutes, LabVIEW datasheet, pricing, peer assessment, datasheets)",
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+
+/** Flat list for exports / search (optional) */
 export interface WBSNode {
   id: string
   title: string
   children: string[]
 }
 
-export const wbsTree: WBSNode[] = [
-  { id: "1.1", title: "Planning & Design", children: ["Project Brief & PID", "WBS & Gantt", "Success Criteria", "Scope & Objectives", "Risks & Mitigation", "Constraints Listed"] },
-  { id: "1.2", title: "Stakeholders", children: ["11 Identified", "Manage Closely", "Keep Informed", "Comm. Strategy", "Power-Interest Grid", "Keep Satisfied", "Monitor Strategy"] },
-  { id: "1.3", title: "Platform Research", children: ["LabVIEW Selected", "Yale Ecosystem", "Alternatives Rejected", "Solar Compatibility", "Amazon Systems", "Genius Hub", "Mind Maps"] },
-  { id: "1.4", title: "Home Design", children: ["1-Bed Floor Plan", "Shelter Floor Plan", "Device Legend", "Device Rationale", "2-Bed Floor Plan", "Per-Room Plan", "Colour-Coded Icons"] },
-  { id: "1.5", title: "Integration & Security", children: ["Wi-Fi / Zigbee", "Z-Wave Protocol", "UK GDPR Compliance", "BS EN 50131", "Ecosystem Integration", "Protocol Table", "4-Field Maps"] },
-  { id: "1.6", title: "Costing", children: ["2-Bed: £1,500", "1-Bed: £1,715", "Shelter: £20,209", "Entire Total: £22,963", "Essentials / Extras", "Benefits & ROI", "Payback Period"] },
-  { id: "1.7", title: "Control Systems", children: ["LabVIEW Overview", "Internal Lighting", "Fire / CO Alarm", "Temperature Control", "Security Logging", "PIR Sensor Spec", "Known Limitations"] },
-  { id: "1.8", title: "PM Tools", children: ["WBS Description", "Gantt Chart", "Critical Path", "4-Field Maps", "Power-Interest Grid", "PIG Analysis"] },
-  { id: "1.9", title: "Training", children: ["Homeowner Guides", "Training Sessions", "Elderly Usability", "Warden Onboarding"] },
-  { id: "1.10", title: "Health & Safety", children: ["H&S Plan", "BS 5839-6 Fire", "Building Reg Part P", "CQC Care Standards", "Risk Assessment", "Health & Social Act"] },
-  { id: "1.11", title: "Review & Report", children: ["Introduction", "Device Review", "Conclusion", "25+ References", "Harvard Format", "Team Performance", "Org Structure"] },
-  { id: "1.12", title: "Appendices", children: ["7 Meeting Minutes", "LabVIEW Datasheet", "Pricing Tables", "Peer Assessment", "Additional Datasheets"] },
-]
+export const wbsTree: WBSNode[] = wbsStructured.activities.flatMap((a) =>
+  a.tasks.map((t) => ({
+    id: t.id,
+    title: t.title,
+    children: t.workPackages.map((w) => w.title),
+  })),
+)
 
 /** Four Fields Map — per phase */
 export type FourFieldsLane = { name: string; tasks: { text: string; detail?: string }[] }
@@ -466,9 +663,9 @@ export const fourFieldsPhases: FourFieldsPhase[] = [
 
 /** Legacy exports for chart components (use housing type labels) */
 const CHART_COLORS: Record<string, string> = {
-  "2-Bed Starter Home": "oklch(0.48 0.16 250)",
-  "4-Bed Family Home": "oklch(0.42 0.09 55)",
-  "Sheltered Accommodation": "oklch(0.45 0.15 290)",
+  "Starter home": "oklch(0.48 0.16 250)",
+  "Family home": "oklch(0.42 0.09 55)",
+  "Shared / sheltered accommodation": "oklch(0.45 0.15 290)",
 }
 
 export function chartColorForHousing(type: string): string {

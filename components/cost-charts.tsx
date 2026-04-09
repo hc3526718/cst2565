@@ -17,20 +17,12 @@ const pieData = costData.map((c) => ({
   fill: chartColorForHousing(c.type),
 }))
 
-const chartConfig = {
-  "2-Bed Starter Home": {
-    label: "2-bed starter",
-    color: chartColorForHousing("2-Bed Starter Home"),
-  },
-  "4-Bed Family Home": {
-    label: "4-bed family",
-    color: chartColorForHousing("4-Bed Family Home"),
-  },
-  "Sheltered Accommodation": {
-    label: "Sheltered",
-    color: chartColorForHousing("Sheltered Accommodation"),
-  },
-} satisfies ChartConfig
+const chartConfig = Object.fromEntries(
+  costData.map((c) => [
+    c.type,
+    { label: `${c.type} (${c.units}u)`, color: chartColorForHousing(c.type) },
+  ]),
+) as ChartConfig
 
 export function CostCharts() {
   return (

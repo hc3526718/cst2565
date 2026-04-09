@@ -8,7 +8,8 @@ export default function CostsPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Cost analysis</h1>
         <p className="text-muted-foreground">
-          Three property types — parts only (GBP), aligned with Gate 2 / checking-stage totals (estate £62,993.95).
+          Parts only (GBP): 8 starter homes, 6 family homes, 1 shared / sheltered unit — per-unit rates × units; estate
+          total £{TOTAL_ESTATE_COST.toLocaleString(undefined, { minimumFractionDigits: 2 })}.
         </p>
       </div>
 

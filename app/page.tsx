@@ -44,7 +44,7 @@ export default function Page() {
             <div className="text-2xl font-bold tabular-nums">
               £{TOTAL_ESTATE_COST.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </div>
-            <p className="text-muted-foreground mt-1 text-xs">Three property types · GBP · Excel model</p>
+            <p className="text-muted-foreground mt-1 text-xs">8 starter · 6 family · 1 shared unit · GBP</p>
           </Card.Content>
         </Card>
 
@@ -88,7 +88,7 @@ export default function Page() {
         <Card className="border-border shadow-sm">
           <Card.Header>
             <Card.Title>Cost breakdown</Card.Title>
-            <Card.Description>Per property type (parts only, Assignment 2 figures)</Card.Description>
+            <Card.Description>Line totals = per-unit rate × units (8 / 6 / 1)</Card.Description>
           </Card.Header>
           <Card.Content>
             <OverviewCharts />
@@ -128,7 +128,7 @@ export default function Page() {
       <Card className="border-border shadow-sm">
         <Card.Header>
           <Card.Title>Property types</Card.Title>
-          <Card.Description>Costing summary (same basis as Gate 2 / checking stage)</Card.Description>
+          <Card.Description>Starter, family & shared accommodation — estate mix per brief</Card.Description>
         </Card.Header>
         <Card.Content>
           <div className="grid gap-4 sm:grid-cols-3">

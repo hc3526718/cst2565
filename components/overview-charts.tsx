@@ -10,7 +10,7 @@ import {
 import { costData, chartColorForHousing } from "@/lib/data"
 
 const chartData = costData.map((c) => ({
-  name: c.type.replace("2-Bed ", "").replace("4-Bed ", "").replace("Sheltered ", "Sheltered "),
+  name: `${c.type} (${c.units}u)`,
   total: c.total,
   perUnit: c.perUnit,
 }))
@@ -18,11 +18,11 @@ const chartData = costData.map((c) => ({
 const chartConfig = {
   total: {
     label: "Total (£)",
-    color: chartColorForHousing("2-Bed Starter Home"),
+    color: chartColorForHousing(costData[0]?.type ?? ""),
   },
   perUnit: {
     label: "Per unit (£)",
-    color: chartColorForHousing("4-Bed Family Home"),
+    color: chartColorForHousing(costData[1]?.type ?? costData[0]?.type ?? ""),
   },
 } satisfies ChartConfig
 
