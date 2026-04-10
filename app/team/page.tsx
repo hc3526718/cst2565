@@ -1,6 +1,7 @@
 import { Card, Badge, Separator } from "@heroui/react"
 import { teamMembers, ganttTasks } from "@/lib/data"
 import { TaskDistribution } from "@/components/task-distribution"
+import { MemberColorLegend } from "@/components/member-color-legend"
 
 const totalNonMilestone = ganttTasks.filter((t) => !t.isMilestone).length
 
@@ -11,6 +12,8 @@ export default function TeamPage() {
         <h1 className="text-2xl font-bold tracking-tight">Team</h1>
         <p className="text-muted-foreground">Member roles, file ownership, and task distribution</p>
       </div>
+
+      <MemberColorLegend />
 
       <div className="grid gap-4 sm:grid-cols-2">
         {teamMembers.map((m) => {
@@ -33,6 +36,7 @@ export default function TeamPage() {
                   <div>
                     <Card.Title className="text-base">{m.name}</Card.Title>
                     <Card.Description className="font-mono text-xs">{m.handle}</Card.Description>
+                    <p className="text-muted-foreground mt-0.5 text-[11px]">Gantt &amp; activities: {m.contributionHue}</p>
                   </div>
                 </div>
               </Card.Header>

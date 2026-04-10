@@ -1,5 +1,6 @@
 import { Card } from "@heroui/react"
 import { activityRows, ownerColor } from "@/lib/data"
+import { MemberColorLegend } from "@/components/member-color-legend"
 
 export default function ActivityListPage() {
   const phases = [...new Set(activityRows.map((r) => r.phase))]
@@ -12,6 +13,8 @@ export default function ActivityListPage() {
           Task register for the Gantt chart (Assignment 2) — IDs, owners, dates, duration, and predecessors.
         </p>
       </div>
+
+      <MemberColorLegend />
 
       <Card className="border-border shadow-sm">
         <Card.Header>

@@ -18,6 +18,7 @@ import {
   PoundSterlingIcon,
   RouteIcon,
   TablePropertiesIcon,
+  TabletSmartphoneIcon,
   UsersIcon,
 } from "lucide-react"
 import { SidebarNav, type NavItem } from "@/components/sidebar-nav"
@@ -30,6 +31,7 @@ const navItems: NavItem[] = [
   { title: "WBS", href: "/wbs", icon: FolderTreeIcon },
   { title: "Four Fields Map", href: "/four-fields", icon: LayoutGridIcon },
   { title: "Costs", href: "/costs", icon: PoundSterlingIcon },
+  { title: "Appliance pricing", href: "/appliance-pricing", icon: TabletSmartphoneIcon },
   { title: "Team", href: "/team", icon: UsersIcon },
   { title: "Milestones", href: "/milestones", icon: FlagIcon },
 ]

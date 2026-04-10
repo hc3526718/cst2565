@@ -43,7 +43,10 @@ export interface TeamMember {
   handle: string
   role: string
   files: string[]
+  /** Distinct colour for Gantt bars, activity list, and team cards */
   color: string
+  /** Plain-language hue for legends (matches `color`) */
+  contributionHue: "Red" | "Blue" | "Green" | "Purple"
 }
 
 export const teamMembers: TeamMember[] = [
@@ -52,37 +55,41 @@ export const teamMembers: TeamMember[] = [
     handle: "@mahari",
     role: "PID, stakeholders, WBS, PM tools, benefits/costs, Appendix C",
     files: ["PID & scope", "WBS (draw.io)", "Stakeholder grid", "Section 17", "Appendix C"],
-    color: "oklch(0.42 0.09 55)",
+    color: "#dc2626",
+    contributionHue: "Red",
   },
   {
     name: "Mohammed",
     handle: "@mohammed",
     role: "Gantt & CPA, review & conclusion, device validation",
     files: ["Activity list & Gantt", "CPA diagram", "Review / Conclusion"],
-    color: "oklch(0.42 0.08 165)",
+    color: "#2563eb",
+    contributionHue: "Blue",
   },
   {
     name: "Nisar",
     handle: "@nisar",
     role: "Introduction, 4-field maps, integration & cyber, final sign-off",
     files: ["Intro & brief", "4-Field Maps", "Integration section", "Final upload"],
-    color: "oklch(0.45 0.15 290)",
+    color: "#16a34a",
+    contributionHue: "Green",
   },
   {
     name: "Haydn",
     handle: "@haydn",
     role: "Systems research, floor plans, costing, appendices, LabVIEW datasheet",
     files: ["Devices & protocols", "Floor plans", "Costing tables", "Appendices A/B"],
-    color: "oklch(0.48 0.16 250)",
+    color: "#9333ea",
+    contributionHue: "Purple",
   },
 ]
 
 export const OWNER_COLORS: Record<string, string> = {
-  Mahari: "oklch(0.42 0.09 55)",
-  Mohammed: "oklch(0.42 0.08 165)",
-  Nisar: "oklch(0.45 0.15 290)",
-  Haydn: "oklch(0.48 0.16 250)",
-  All: "oklch(0.38 0.02 0)",
+  Mahari: "#dc2626",
+  Mohammed: "#2563eb",
+  Nisar: "#16a34a",
+  Haydn: "#9333ea",
+  All: "#64748b",
 }
 
 export function ownerColor(owner: string): string {

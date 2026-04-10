@@ -14,6 +14,7 @@ import {
   formatShortDate,
   type GanttTask,
 } from "@/lib/data"
+import { MemberColorLegend } from "@/components/member-color-legend"
 
 const PHASE_ORDER = [
   "Phase 1 — Project kick-off & planning",
@@ -166,6 +167,8 @@ export function GanttChart() {
           Weekly Friday meeting
         </span>
       </div>
+
+      <MemberColorLegend />
 
       <p className="text-muted-foreground text-[11px]">
         ♦ = Weekly Friday meeting · Hover a bar for task details (anchored to the bar you point at).
