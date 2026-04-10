@@ -20,11 +20,13 @@ import {
   TablePropertiesIcon,
   TabletSmartphoneIcon,
   UsersIcon,
+  HandshakeIcon,
 } from "lucide-react"
 import { SidebarNav, type NavItem } from "@/components/sidebar-nav"
 
 const navItems: NavItem[] = [
   { title: "Overview", href: "/", icon: LayoutDashboardIcon },
+  { title: "Stakeholders", href: "/stakeholders", icon: HandshakeIcon },
   { title: "Gantt Chart", href: "/gantt", icon: GanttChartIcon },
   { title: "Activity list", href: "/activity-list", icon: TablePropertiesIcon },
   { title: "CPA", href: "/cpa", icon: RouteIcon },
